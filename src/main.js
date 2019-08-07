@@ -4,9 +4,15 @@ import router from './routers'
 import store from './stores'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-
+import axios from 'axios'
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
+
+Vue.prototype.axios = axios;
+
+Vue.filter('setWH',(url,arg)=>{
+  return url.replace(/w\.h/,arg)
+});
 
 new Vue({
   router,
