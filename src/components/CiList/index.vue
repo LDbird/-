@@ -1,7 +1,7 @@
 <template>
     <div id="CiList">
         <div class="cinema_body">
-            <ul>
+            <Scroll> <ul>
                 <li v-for="item in cinemaList" :key="item.id">
                     <div>
                         <span>{{item.nm}}</span>
@@ -20,7 +20,7 @@
                         >{{key | formatCard}}</div>
                     </div>
                 </li>
-            </ul>
+            </ul></Scroll>
         </div>
     </div>
 </template>
@@ -30,14 +30,23 @@
         name: "CiList",
         data(){
             return{
-                cinemaList:[]
+                cinemaList:[],
+                prevCityId:-1,
+                isLoading:true
             }
         },
-        mounted() {
-            this.axios.get('/api/cinemaList?cityId=10').then((res)=>{
+        activated() {
+            var cityId = this.$store.state.city.id;
+            if(this.prevCityId === cityId){
+                return;
+            }
+            this.isLoading = true;
+            this.axios.get('/api/cinemaList?cityId='+cityId).then((res)=>{
                 var msg = res.data.msg;
                 if(msg === 'ok'){
                     this.cinemaList = res.data.data.cinemas;
+                    this.prevCityId = cityId;
+                    this.isLoading = false;
                 }
             })
         },
