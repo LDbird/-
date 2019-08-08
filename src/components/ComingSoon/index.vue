@@ -1,19 +1,24 @@
 <template>
-    <div class="movie_body">
-        <ul>
-            <li v-for="item in comingList">
-                <div class="pic_show"><img :src="item.img | setWH('128.180')" alt=""></div>
-                <div class="info_list">
-                    <h2>{{item.nm}}</h2>
-                    <p><span class="grade">{{item.wish}}</span>人想看</p>
-                    <p>主演：{{item.star}}</p>
-                    <p>{{item.showInfo}}</p>
-                </div>
-                <div class="btn_mall">
-                    购票
-                </div>
-            </li>
-        </ul>
+    <div id="ComingSoon">
+        <div class="comingSoon_body">
+            <Loading v-if="isLoading"/>
+            <Scroll>
+                <ul>
+                    <li v-for="item in comingList">
+                        <div class="pic_show"><img :src="item.img | setWH('128.180')" alt=""></div>
+                        <div class="info_list">
+                            <h2>{{item.nm}}</h2>
+                            <p><span class="grade">{{item.wish}}</span>人想看</p>
+                            <p>主演：{{item.star}}</p>
+                            <p>{{item.showInfo}}</p>
+                        </div>
+                        <div class="btn_mall">
+                            购票
+                        </div>
+                    </li>
+                </ul>
+            </Scroll>
+        </div>
     </div>
 </template>
 
@@ -22,15 +27,27 @@
         name: "index",
         data(){
             return{
-                comingList:[]
+                comingList:[],
+                prevCityId:-1,
+                isLoading:true
             }
         },
-        mounted() {
-            this.axios.get('/api/movieComingList?cityId=10').then((res)=>{
+        activated() {
+
+            var cityId = this.$store.state.city.id;
+
+            if(this.prevCityId === cityId){
+                return;
+            }
+            this.isLoading = true;
+
+            this.axios.get('/api/movieComingList?cityId='+cityId).then((res)=>{
                 var msg = res.data.msg;
                 console.log(res);
                 if(msg === 'ok'){
                     this.comingList = res.data.data.comingList;
+                    this.isLoading = false;
+                    this.prevCityId = cityId;
                 }
             })
         }
@@ -38,34 +55,35 @@
 </script>
 
 <style scoped>
-    .movie_body{
+    #content .comingSoon_body{ flex:1; overflow:auto;position: absolute;top: 0;bottom: 0;margin-top: 99px;width: 100%}
+    .comingSoon_body{
         flex: 1;
         overflow: hidden;
     }
-    .movie_body ul{
+    .comingSoon_body ul{
         margin: 0 12px;
         overflow: hidden;
     }
-    .movie_body ul li{
+    .comingSoon_body ul li{
         margin-top: 12px;
         display: flex;
         align-items: center;
         border-bottom: 1px solid #e6e6e6;
         padding-bottom: 10px;
     }
-    .movie_body .pic_show{
+    .comingSoon_body .pic_show{
         width: 64px;
         height: 90px;
     }
-    .movie_body .pic_show img{
+    .comingSoon_body .pic_show img{
         width: 100%;
     }
-    .movie_body .info_list{
+    .comingSoon_body .info_list{
         margin-left: 10px;
         flex: 1;
         position: relative;
     }
-    .movie_body .info_list h2{
+    .comingSoon_body .info_list h2{
         font-size: 17px;
         line-height: 24px;
         width: 150px;
@@ -73,7 +91,7 @@
         white-space: nowrap;
         text-overflow: ellipsis;
     }
-    .movie_body .info_list .grade{
+    .comingSoon_body .info_list .grade{
         font-weight: 700;
         color: #666;
         line-height: 22px;
@@ -82,13 +100,13 @@
         white-space: nowrap;
         text-overflow: ellipsis;
     }
-    .movie_body .info_list img{
+    .comingSoon_body .info_list img{
         width: 50px;
         position: absolute;
         right: 10px;
         font-size: 15px;
     }
-    .movie_body  .btn_mall , .movie_body .btn_mall{
+    .comingSoon_body  .btn_mall , .comingSoon_body .btn_mall{
         width: 47px;
         height: 27px;
         line-height: 28px;
@@ -99,7 +117,7 @@
         font-size: 12px;
         cursor: pointer;
     }
-    .movie_body .btn_mall{
+    .comingSoon_body .btn_mall{
         background: #3c9fe6;
     }
 </style>

@@ -14,6 +14,12 @@ Vue.filter('setWH',(url,arg)=>{
   return url.replace(/w\.h/,arg)
 });
 
+import Scroll from '@/components/Scroll';
+Vue.component('Scroll',Scroll);
+
+import Loading from '@/components/Loading';
+Vue.component('Loading',Loading);
+
 new Vue({
   router,
   store,
