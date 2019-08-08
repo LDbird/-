@@ -1,5 +1,6 @@
 <template>
     <Header id="header">
+        <slot></slot>
         <h1>{{title}}</h1>
     </Header>
 </template>
